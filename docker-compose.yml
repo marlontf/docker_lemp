@@ -1,0 +1,55 @@
+version: '3.8'
+
+# Services
+services:
+
+  # Nginx Service
+  nginx:
+    image: nginx:1.22.0-alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./www:/var/www/php
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+
+  # PHP Service
+  php:
+    build: ./.docker/php
+    working_dir: /var/www/php
+    volumes:
+      - ./www:/var/www/php
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  # MariaDB Service
+  mariadb:
+    image: mariadb:10.8.3
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_HOST: "%"
+      MARIADB_DATABASE: demo
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./.mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MARIADB_ROOT_PASSWORD
+      interval: 5s
+      retries: 10
+
+  # PhpMyAdmin Service
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 1G
+    depends_on:
+      mariadb:
+        condition: service_healthy
