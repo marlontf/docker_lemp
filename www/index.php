@@ -20,14 +20,17 @@
     <body>
         <img src="https://tech.osteel.me/images/2020/03/04/hello.gif" alt="Hello there" class="center">
         <?php
-        $connection = new PDO('mysql:host=mariadb;dbname=demo;charset=utf8', 'root', 'root');
-        $query      = $connection->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'demo'");
+	$dbname = 'pingcast';
+	$user = 'root';
+	$pass = 'QueroPontos';
+        $connection = new PDO('mysql:host=mariadb;'.$dbname.';charset=utf8', $user, $pass);
+        $query      = $connection->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$dbname."'");
         $tables     = $query->fetchAll(PDO::FETCH_COLUMN);
 
         if (empty($tables)) {
-            echo '<p class="center">There are no tables in database <code>demo</code>.</p>';
+            echo '<p class="center">Não há tabelas no banco de dados <code>'.$dbname.'</code>.</p>';
         } else {
-            echo '<p class="center">Database <code>demo</code> contains the following tables:</p>';
+            echo '<p class="center">O banco <code>'.$dbname.'</code> contém as seguintes tabelas:</p>';
             echo '<ul class="center">';
             foreach ($tables as $table) {
                 echo "<li>{$table}</li>";

@@ -8,11 +8,21 @@ services:
     image: nginx:1.22.0-alpine
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ./www:/var/www/php
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./.data/certbot/conf:/etc/letsencrypt
+      - ./.data/certbot/www:/var/www/certbot
     depends_on:
       - php
+
+  # Certbot Service
+  certbot:
+    image: certbot/certbot:arm64v8-latest
+    volumes:
+      - ./.data/certbot/conf:/etc/letsencrypt
+      - ./.data/certbot/www:/var/www/certbot
 
   # PHP Service
   php:
@@ -28,9 +38,9 @@ services:
   mariadb:
     image: mariadb:10.8.3
     environment:
-      MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: QueroPontos
       MARIADB_ROOT_HOST: "%"
-      MARIADB_DATABASE: demo
+      MARIADB_DATABASE: pingcast
     ports:
       - 3306:3306
     volumes:
