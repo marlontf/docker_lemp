@@ -13,7 +13,7 @@ services:
       - ./www:/var/www/php
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d
       - ./.data/certbot/conf:/etc/letsencrypt
-      - ./.data/certbot/www:/var/www/certbot
+      - ./.data/certbot/www:/var/www/jphp/certbot
     depends_on:
       - php
 
@@ -22,7 +22,7 @@ services:
     image: certbot/certbot:arm64v8-latest
     volumes:
       - ./.data/certbot/conf:/etc/letsencrypt
-      - ./.data/certbot/www:/var/www/certbot
+      - ./.data/certbot/www:/var/www/php/certbot
 
   # PHP Service
   php:
